@@ -25,7 +25,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.1.html')
+    return render_template('index.html')
 
 
 @app.route('/evaluate', methods=['POST'])
