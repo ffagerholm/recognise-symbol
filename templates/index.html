@@ -1,0 +1,70 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Handwriting recognition,</title>
+    <meta name="description">
+    <meta name="Fredrik" content="Handwriting recognition">
+
+    <!--[if lt IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+    <![endif]-->
+    <script type='text/javascript' 
+       src='http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.4.0/fabric.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript">    
+        var canvas;
+
+        window.onload = function() {    
+            canvas = new fabric.Canvas('can');
+            canvas.isDrawingMode = true;
+            canvas.freeDrawingBrush.width = 25;
+            canvas.freeDrawingBrush.color = '#000000';
+            canvas.backgroundColor = '#ffffff';
+        }
+
+        function erase() {
+            canvas.clear();
+        }    
+
+        function send() {
+            var canvas = document.getElementById('can');
+            var dataURL = canvas.toDataURL();
+            
+            $.ajax({
+                url: "evaluate",
+                type: "POST",
+                data: { 
+                    imgBase64: dataURL
+                },
+                success: function(response) {
+                    var elem = document.getElementById('message');
+                    elem.style.color = "black";
+                    elem.innerHTML = "Classification: " + response;
+                },
+                error: function(response) {
+                    var elem = document.getElementById('message');
+                    elem.style.color = "red";
+                    elem.innerHTML = response;
+                }
+            });
+        }
+    </script>
+    <style type='text/css'>
+    #can {
+            border:1px solid black;
+    }
+    </style>
+</head>
+<body>
+    <h3 id="prediction"></h3>
+    <canvas id="can" width="280" height="280" style="border:2px solid;"></canvas>
+    <input type="button" value="predict" id="btn" size="30" 
+        onclick="send()" style="position:absolute;top:340px;">
+    <input type="button" value="clear" id="clr" size="23" 
+        onclick="erase()" style="position:absolute;top:340px;left:70px;">
+    <b><p id="message"></p></b>
+</body>
+</html>
